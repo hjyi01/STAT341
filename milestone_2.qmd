@@ -1,0 +1,83 @@
+---
+title: "Milestone 2: Got Plan"
+authors: Heewon Yi, Noelle Haviland, Celia Carey
+format: html
+editor: visual
+embed-resources: true
+---
+
+```{r}
+#| include: false
+library(dagitty)
+library(CalvinBayes)
+library(dplyr)
+```
+
+## Goals
+
+As you plan, keep in mind the Projects Overview (so you make choices that will allow you to add-on the add-on credits you desire!)
+
+At this point, you should have your dataset in hand and should be starting to think in more detail about the model you will fit.
+
+If any data wrangling is needed to prepare your dataset for model fitting, either work on that or ask Prof DR for help (I am happy to do all wrangling for you but I need direction on what it is you want to be done).
+
+You should have your causal diagram in mind by now, so you know what predictor(s) and response you'll use and how they are related (and what other variables must be considered in modeling). 
+
+## What to hand in
+In this week's milestone submission, include a causal diagram with notes and explanation.
+
+If possible, think about stating your model description and rationale for priors.
+
+If you get that far, simulating a prior predictive distribution should be a next step to reality-check your prior choices.
+
+You should also work on deciding this week whether your model will be hierarchical -- will you include any random intercepts (or - probably not - random slopes)?
+
+Your submission should be a rendered Quarto document showing all your work so far, your diagram, and notes about your plans (or accomplishments).
+
+## Read in dataset
+
+```{r}
+library(readxl)
+exchange <- read_excel("/rprojects/hjy4/STAT 341 Final Project/fredgraph.xlsx")
+
+glimpse(exchange)
+```
+
+## Where is the data from?
+
+The data is from the FRED website and we're looking at how the Brazilian Reals to USD Spot Exchange Rate (https://fred.stlouisfed.org/series/DEXBZUS#, Data Updated: 2025-04-07) is affected by the:
+- US Federal Funds Effective Rate, Percent, Daily, Not Seasonally Adjusted (https://fred.stlouisfed.org/series/DFF#, Data Updated: 2025-04-07)
+- OECD based Recession Indicators for Brazil from the Peak through the Trough, +1 or 0, Daily, Not Seasonally Adjusted (https://fred.stlouisfed.org/series/BRARECDM#, Data Updated: 2022-11-10)
+- Job Postings on Indeed in the United States, Index Feb, 1 2020=100, Daily, Seasonally Adjusted (https://fred.stlouisfed.org/series/IHLIDXUS#, Data Updated: 2025-04-08)
+
+We first acquired data on April 3, but ultimately changed our minds and downloaded data on April 8 that we are planning to use. The data comes from the FRED website and is identified by an alphacode title (DEXBZUS, DFF,BRARECDM, and IHLIDXUS). 
+
+To format it in excel after downloading, we lined up the daily data that came in two sheets and placed the columns next to one another. 
+
+
+## Causal Diagram
+
+```{r}
+
+causal_diagram <- dagitty("dag{
+  FedFundsRate -> Reals_USD_Exchange;
+  RecessionIndicator -> Reals_USD_Exchange;
+  JobPostings -> Reals_USD_Exchange
+}")
+
+gg_dag(causal_diagram,
+       size = 60,
+       highlight = 'Reals_USD_Exchange')
+```
+
+
+## Causal Diagram Explanation
+
+- The Federal Funds Effective Rate, Percent, Daily, Not Seasonally Adjusted is a measure of the daily average interest rate that banks lend the money they have in reserve to one another after hours as a percent. 
+
+- The OECD based Recession Indicators for Brazil from the Peak through the Trough, +1 or 0, Daily, Not Seasonally Adjusted has two values: 1 and 0. A 1 indicates that Brazil is experiencing a period of expansion and the 0 indicates a period of recession. 
+
+- The last factor: Job Postings on Indeed in the United States, Index Feb, 1 2020=100, Daily, Seasonally Adjusted represents seasonally adjusted job postings with an average over the last 7 days. 
+
+
+
