@@ -1,0 +1,15 @@
+---
+title: "Notes"
+format: html
+editor: visual
+---
+
+## Statistics
+
+-   Priors
+
+-   Posteriors
+
+-   Code
+
+-   Animated graphs
