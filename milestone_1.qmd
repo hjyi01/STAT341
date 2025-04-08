@@ -1,0 +1,61 @@
+---
+title: "Milestone 1: Got Data"
+authors: Heewon Yi, Noelle Haviland, Celia Carey
+format: html
+editor: visual
+embed-resources: true
+---
+
+```{r}
+#| include: false
+library(dagitty)
+library(CalvinBayes)
+library(dplyr)
+```
+
+## Goals
+
+This week your goal should be to choose and obtain your dataset, figure out how to read it into R, investigate the background of your topic, and consider a causal diagram for your model.
+
+This should be enough work to help you determine if you need help figuring out how to get your data into R and do any preparation and formatting. If this is needed and you know how to do it from previous experience: great. But it's not part of this project, so Prof DR will be happy to help with any data prep and wrangling that is needed (and essentially show you exactly how to do it). Just ask via email or meet with me if needed.
+
+## What to hand in
+
+Submit a rendered quarto document that: - reads in your dataset and - shows a glimpse() of it. - In the text part of the file, explain:
+
+where the data is from and what question you're going to try to answer with it. Aim for a question specific enough that it clearly indicates the response variable you will model, and a key predictor whose association with the response you want to measure. Your response variable need not be a quantitative, continuous one -- in fact, if you want to do the "GLM" add-on, you'll want to choose a response that is better matched by some other probability distribution, not the Normal! Optionally, you can also include a draft causal diagram relevant to your planned model.
+
+## Read in dataset
+
+```{r}
+library(readxl)
+exchange <- read_excel("/rprojects/hjy4/STAT 341 Final Project/fredgraph.xlsx")
+
+glimpse(exchange)
+```
+
+## Where is the data from?
+
+The data is from the FRED website and we're looking at how the Brazilian Reals to USD Spot Exchange Rate is affected by inflation in the US, the gross federal debt, and interest rates in the US as well.
+
+## What are we trying to answer?
+
+Interest rates, federal debt, and inflation all contribute to the way that foreign investors value the USD. We are looking to see what of the three factors is most influential to the way that the Brazilian Reals is valued against the USD.
+
+## Causal Diagram
+
+```{r}
+
+causal_diagram <- dagitty("dag{
+  Inflation -> Reals_USD_Exchange;
+  Debt -> Reals_USD_Exchange;
+  Interest_Rate -> Reals_USD_Exchange
+}")
+
+gg_dag(causal_diagram,
+       size = 60,
+       highlight = 'Reals_USD_Exchange')
+
+# plot it
+gg_dag(causal_diagram)
+```
