@@ -13,3 +13,5 @@ editor: visual
 -   Code
 
 -   Animated graphs
+
+some added notes
