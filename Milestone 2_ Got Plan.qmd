@@ -84,7 +84,8 @@ exchange <- exchange |>
          IHLIDXUS = "IHLIDXUS (Job Posting)",
          DEXBZUS = "DEXBZUS (exchange rate)") |>
   mutate(DFF_scaled = as.numeric(scale(DFF)),
-         BRARECDM_scaled = as.numeric(scale(BRARECDM)),
          IHLIDXUS_scaled = as.numeric(scale(IHLIDXUS)),
          DEXBZUS_scaled = as.numeric(scale(DEXBZUS)))
 ```
+
+We have standardized all of our variables (except the categorical one) so we will be able to choose standardized priors.
