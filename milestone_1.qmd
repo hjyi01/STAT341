@@ -29,7 +29,7 @@ where the data is from and what question you're going to try to answer with it. 
 
 ```{r}
 library(readxl)
-exchange <- read_excel("/rprojects/hjy4/STAT 341 Final Project/fredgraph.xlsx")
+exchange <- read_excel("fredgraph.xlsx")
 
 glimpse(exchange)
 ```
