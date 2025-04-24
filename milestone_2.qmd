@@ -13,26 +13,6 @@ library(CalvinBayes)
 library(dplyr)
 ```
 
-## Goals
-
-As you plan, keep in mind the Projects Overview (so you make choices that will allow you to add-on the add-on credits you desire!)
-
-At this point, you should have your dataset in hand and should be starting to think in more detail about the model you will fit.
-
-If any data wrangling is needed to prepare your dataset for model fitting, either work on that or ask Prof DR for help (I am happy to do all wrangling for you but I need direction on what it is you want to be done).
-
-You should have your causal diagram in mind by now, so you know what predictor(s) and response you'll use and how they are related (and what other variables must be considered in modeling). 
-
-## What to hand in
-In this week's milestone submission, include a causal diagram with notes and explanation.
-
-If possible, think about stating your model description and rationale for priors.
-
-If you get that far, simulating a prior predictive distribution should be a next step to reality-check your prior choices.
-
-You should also work on deciding this week whether your model will be hierarchical -- will you include any random intercepts (or - probably not - random slopes)?
-
-Your submission should be a rendered Quarto document showing all your work so far, your diagram, and notes about your plans (or accomplishments).
 
 ## Read in dataset
 
@@ -46,8 +26,11 @@ glimpse(exchange)
 ## Where is the data from?
 
 The data is from the FRED website and we're looking at how the Brazilian Reals to USD Spot Exchange Rate (https://fred.stlouisfed.org/series/DEXBZUS#, Data Updated: 2025-04-07) is affected by the:
+
 - US Federal Funds Effective Rate, Percent, Daily, Not Seasonally Adjusted (https://fred.stlouisfed.org/series/DFF#, Data Updated: 2025-04-07)
+
 - OECD based Recession Indicators for Brazil from the Peak through the Trough, +1 or 0, Daily, Not Seasonally Adjusted (https://fred.stlouisfed.org/series/BRARECDM#, Data Updated: 2022-11-10)
+
 - Job Postings on Indeed in the United States, Index Feb, 1 2020=100, Daily, Seasonally Adjusted (https://fred.stlouisfed.org/series/IHLIDXUS#, Data Updated: 2025-04-08)
 
 We first acquired data on April 3, but ultimately changed our minds and downloaded data on April 8 that we are planning to use. The data comes from the FRED website and is identified by an alphacode title (DEXBZUS, DFF,BRARECDM, and IHLIDXUS). 
@@ -68,6 +51,7 @@ causal_diagram <- dagitty("dag{
 gg_dag(causal_diagram,
        size = 60,
        highlight = 'Reals_USD_Exchange')
+
 ```
 
 
@@ -79,5 +63,32 @@ gg_dag(causal_diagram,
 
 - The last factor: Job Postings on Indeed in the United States, Index Feb, 1 2020=100, Daily, Seasonally Adjusted represents seasonally adjusted job postings with an average over the last 7 days. 
 
+
+### Model Description 
+
+
+
+#### rationale
+
+Response Variable: Reals to USD Exchange Rate
+
+
+Predictor Variable: US Federal Funds rate
+https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the
+An increase to the Federal Funds Rate should create an initial boost in the value of the dollar. With a higher value assigned to the USD, the exchange rate should increase. Therefore, this should be a positive relationship. 
+
+Predictor Variable: US Job Postings
+According to the Federal Reserve Bank of New York, "rise in employment strengthens the foreign exchange value of the dollar". Therefore, also should be a positive relationship. 
+
+
+Categorical Variable: Brazil Recession Indicator
+During a recession, the money that used to be able to purchase, say two gallons of milk, will now only be able to purchase a quarter gallon. This indicates that the currency has become less valueable and should therefore even out in relation to another currency, hence a negative relationship to the exchange rate. 
+
+
+### Citations 
+
+Cochrane, J. H. (2024, September 16). Do higher interest rates raise the exchange rate? The Grumpy Economist. https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the
+
+Harris, E., & Zabka, N. M. (1995). The employment report and the dollar. Number, 1. https://doi.org/10.2139/ssrn.1001251
 
 
