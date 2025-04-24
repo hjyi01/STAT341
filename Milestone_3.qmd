@@ -1,0 +1,117 @@
+---
+title: "Milestone 3: Got Priors"
+authors: Heewon Yi, Noelle Haviland, Celia Carey
+format: html
+editor: visual
+embed-resources: true
+---
+
+```{r}
+#| include: false
+library(dagitty)
+library(CalvinBayes)
+library(dplyr)
+```
+
+## Read in dataset
+
+```{r}
+library(readxl)
+exchange <- read_excel("fredgraph.xlsx")
+
+glimpse(exchange)
+```
+
+Variable Standardization
+
+```{r}
+exchange <- exchange |>
+  rename(FedFundsRate = "DFF (Federal Funds rate)",
+         RecessionIndicator = "BRARECDM (Brazilian recession indicator)",
+         JobPostings = "IHLIDXUS (Job Posting)",
+         Reals_USD_Exchange = "DEXBZUS (exchange rate)") |>
+  mutate(DFF_scaled = as.numeric(scale(FedFundsRate)),
+         IHLIDXUS_scaled = as.numeric(scale(JobPostings)),
+         DEXBZUS_scaled = as.numeric(scale(Reals_USD_Exchange)))
+```
+
+
+## Where is the data from?
+
+The data is from the FRED website and we're looking at how the Brazilian Reals to USD Spot Exchange Rate (https://fred.stlouisfed.org/series/DEXBZUS#, Data Updated: 2025-04-07) is affected by the:
+
+-   US Federal Funds Effective Rate, Percent, Daily, Not Seasonally Adjusted (https://fred.stlouisfed.org/series/DFF#, Data Updated: 2025-04-07)
+
+-   OECD based Recession Indicators for Brazil from the Peak through the Trough, +1 or 0, Daily, Not Seasonally Adjusted (https://fred.stlouisfed.org/series/BRARECDM#, Data Updated: 2022-11-10)
+
+-   Job Postings on Indeed in the United States, Index Feb, 1 2020=100, Daily, Seasonally Adjusted (https://fred.stlouisfed.org/series/IHLIDXUS#, Data Updated: 2025-04-08)
+
+We first acquired data on April 3, but ultimately changed our minds and downloaded data on April 8 that we are planning to use. The data comes from the FRED website and is identified by an alphacode title (DEXBZUS, DFF,BRARECDM, and IHLIDXUS).
+
+To format it in excel after downloading, we lined up the daily data that came in two sheets and placed the columns next to one another.
+
+## Causal Diagram
+
+```{r}
+
+causal_diagram <- dagitty("dag{
+  FedFundsRate -> Reals_USD_Exchange;
+  RecessionIndicator -> Reals_USD_Exchange;
+  JobPostings -> Reals_USD_Exchange
+}")
+
+gg_dag(causal_diagram,
+       size = 60,
+       highlight = 'Reals_USD_Exchange')
+
+```
+
+## Causal Diagram Explanation
+
+-   The Federal Funds Effective Rate, Percent, Daily, Not Seasonally Adjusted is a measure of the daily average interest rate that banks lend the money they have in reserve to one another after hours as a percent.
+
+-   The OECD based Recession Indicators for Brazil from the Peak through the Trough, +1 or 0, Daily, Not Seasonally Adjusted has two values: 1 and 0. A 1 indicates that Brazil is experiencing a period of expansion and the 0 indicates a period of recession.
+
+-   The last factor: Job Postings on Indeed in the United States, Index Feb, 1 2020=100, Daily, Seasonally Adjusted represents seasonally adjusted job postings with an average over the last 7 days.
+
+### Model Description
+
+$$
+\text{Reals_USD_Exchange} \sim \text{Gamma distribution}(\alpha_{[i]}, \beta)
+$$
+
+$$
+\alpha_{[i]} = \beta_0+\beta_1x_1+\beta_2x_2+\beta_3x_3
+$$
+
+$$
+\beta_1\sim\text{Normal}(1.5, 2)
+$$
+
+$$
+\beta_2\sim\text{Normal(.5, .5)}
+$$
+
+$$
+\beta_3\sim\text{Normal(125, 30)}
+$$
+
+$$
+\sigma\sim\text{exp}(0,1)
+$$
+
+#### rationale
+
+Response Variable: Reals to USD Exchange Rate
+
+Predictor Variable: US Federal Funds rate https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the An increase to the Federal Funds Rate should create an initial boost in the value of the dollar. With a higher value assigned to the USD, the exchange rate should increase. Therefore, this should be a positive relationship.
+
+Predictor Variable: US Job Postings According to the Federal Reserve Bank of New York, "rise in employment strengthens the foreign exchange value of the dollar". Therefore, also should be a positive relationship.
+
+Categorical Variable: Brazil Recession Indicator During a recession, the money that used to be able to purchase, say two gallons of milk, will now only be able to purchase a quarter gallon. This indicates that the currency has become less valueable and should therefore even out in relation to another currency, hence a negative relationship to the exchange rate.
+
+### Citations
+
+Cochrane, J. H. (2024, September 16). Do higher interest rates raise the exchange rate? The Grumpy Economist. https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the
+
+Harris, E., & Zabka, N. M. (1995). The employment report and the dollar. Number, 1. https://doi.org/10.2139/ssrn.1001251
