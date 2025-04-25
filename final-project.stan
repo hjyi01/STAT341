@@ -5,6 +5,7 @@ data {
   vector[n] JobPostings;
   array[n] int RecessionIndicator;  
 }
+
 parameters {
   real b1;
   vector[2] b2; // There are two levels: 1 means no recession and 2 means recession.
@@ -17,7 +18,7 @@ model {
   vector[n] alpha;
   vector[n] lambda;
   for ( i in 1:n ) {
-    mu[i] = exp(b1 * FedFundsRate[i] + b2 * JobPostings[i] + b3[RecessionIndicator[i]]);
+    mu[i] = exp(b1 * FedFundsRate[i] + b2[RecessionIndicator[i]] + b3 * JobPostings[i]);
     alpha[i] = mu[i]^2 / sigma^2;
     lambda[i] = mu[i] / sigma^2;
   }
