@@ -126,7 +126,25 @@ glimpse(prior_pred_dists)
 ```
 
 ```{r}
-# TODO: Add code to draw from the prior samples generated above.
+
+beta_0 <- 0
+
+# Create prior predictive draws
+prior_pred_dists <- prior_pred_dists %>%
+  mutate(
+    mu = beta_0 + b1 + b2 + b3,
+    y_sim = rgamma(n_sim, shape = mu / sigma, rate = 1 / sigma)
+  )
+
+glimpse(prior_pred_dists)
+
+gf_dens(~ y_sim, data = prior_pred_dists) %>%
+  gf_labs(
+    title = "Prior Predictive Density of Simulated Outcomes",
+    x = "Simulated y",
+    y = "Density"
+  )
+
 ```
 
 ### Citations
