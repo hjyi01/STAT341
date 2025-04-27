@@ -45,7 +45,7 @@ The data is from the FRED website and we're looking at how the Brazilian Reals t
 
 -   Job Postings on Indeed in the United States, Index Feb, 1 2020=100, Daily, Seasonally Adjusted (https://fred.stlouisfed.org/series/IHLIDXUS#, Data Updated: 2025-04-08)
 
-We first acquired data on April 3, but ultimately changed our minds and downloaded data on April 8 that we are planning to use. The data comes from the FRED website and is identified by an alphacode title (DEXBZUS, DFF,BRARECDM, and IHLIDXUS).
+We first acquired data on April 3, but ultimately changed our minds and downloaded data on April 8 that we are planning to use. The data comes from the FRED website and is identified by an alphacode title (DEXBZUS, DFF, BRARECDM, and IHLIDXUS).
 
 To format it in excel after downloading, we lined up the daily data that came in two sheets and placed the columns next to one another.
 
@@ -69,7 +69,7 @@ gg_dag(causal_diagram,
 
 -   The Federal Funds Effective Rate, Percent, Daily, Not Seasonally Adjusted is a measure of the daily average interest rate that banks lend the money they have in reserve to one another after hours as a percent.
 
--   The OECD based Recession Indicators for Brazil from the Peak through the Trough, +1 or 0, Daily, Not Seasonally Adjusted has two values: 1 and 0. A 1 indicates that Brazil is experiencing a period of expansion and the 0 indicates a period of recession.
+-   The OECD based recession indicators for Brazil from the peak through the trough, +1 or 0, Daily, not seasonally adjusted has two values: 1 and 0. A 1 indicates that Brazil is experiencing a period of expansion and the 0 indicates a period of recession.
 
 -   The last factor: Job Postings on Indeed in the United States, Index Feb, 1 2020=100, Daily, Seasonally Adjusted represents seasonally adjusted job postings with an average over the last 7 days.
 
@@ -99,15 +99,17 @@ $$
 \lambda\sim\text{exp}(0,1)
 $$
 
-#### rationale
+#### Rationale
 
 Response Variable: Reals to USD Exchange Rate
 
-Predictor Variable: US Federal Funds rate ($\beta_1$) https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the An increase to the Federal Funds Rate should create an initial boost in the value of the dollar. With a higher value assigned to the USD, the exchange rate should increase. Therefore, this should be a positive relationship.
+- Predictor Variable: US Federal Funds rate ($\beta_1$) (https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the)
 
-Predictor Variable: US Job Postings According to the Federal Reserve Bank of New York, ($\beta_3$) "rise in employment strengthens the foreign exchange value of the dollar". Therefore, also should be a positive relationship.
+An increase to the Federal Funds Rate should create an initial boost in the value of the dollar. With a higher value assigned to the USD, the exchange rate should increase. Therefore, this should be a positive relationship.
 
-Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicator[i]}}$) During a recession, the money that used to be able to purchase, say two gallons of milk, will now only be able to purchase a quarter gallon. This indicates that the currency has become less valueable and should therefore even out in relation to another currency, hence a negative relationship to the exchange rate.
+- Predictor Variable: US Job Postings According to the Federal Reserve Bank of New York, ($\beta_3$) "rise in employment strengthens the foreign exchange value of the dollar". Therefore, also should be a positive relationship.
+
+- Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicator[i]}}$) During a recession, the money that used to be able to purchase, say two gallons of milk, will now only be able to purchase a quarter gallon. This indicates that the currency has become less valueable and should therefore even out in relation to another currency, hence a negative relationship to the exchange rate.
 
 ## Prior Predictive Distribution
 
@@ -138,12 +140,13 @@ prior_pred_dists <- prior_pred_dists %>%
 
 glimpse(prior_pred_dists)
 
-gf_dens(~ y_sim, data = prior_pred_dists) %>%
+gf_dens(~ y_sim, data = prior_pred_dists, color = "darkblue") %>%
   gf_labs(
     title = "Prior Predictive Density of Simulated Outcomes",
     x = "Simulated y",
     y = "Density"
-  )
+  ) + 
+  theme_bw()
 
 ```
 
