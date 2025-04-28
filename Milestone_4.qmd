@@ -6,17 +6,39 @@ editor: visual
 embed-resources: true 
 ---
 
-```{r} #| include: false library(dagitty) library(CalvinBayes) library(dplyr)}
+```{r}
+#| include: false 
+library(dagitty) 
+library(CalvinBayes) 
+library(dplyr)
+library(rstan)
 ```
 
 ## Read in dataset
 
-```{r} library(readxl) exchange <- read_excel("fredgraph.xlsx")  glimpse(exchange)}
+```{r}
+library(readxl) 
+exchange <- read_excel("fredgraph.xlsx")  
+glimpse(exchange)
 ```
 
 Variable Standardization
 
-```{r} exchange <- exchange |>   rename(FedFundsRate = "DFF (Federal Funds rate)",          RecessionIndicator = "BRARECDM (Brazilian recession indicator)",          JobPostings = "IHLIDXUS (Job Posting)",          Reals_USD_Exchange = "DEXBZUS (exchange rate)") |>   mutate(DFF_scaled = as.numeric(scale(FedFundsRate)),          IHLIDXUS_scaled = as.numeric(scale(JobPostings)),          DEXBZUS_scaled = as.numeric(scale(Reals_USD_Exchange)))}
+```{r}
+exchange <- exchange |>   
+  rename(FedFundsRate = "DFF (Federal Funds rate)",          
+         RecessionIndicator = "BRARECDM (Brazilian recession indicator)",          
+         JobPostings = "IHLIDXUS (Job Posting)",          
+         Reals_USD_Exchange = "DEXBZUS (exchange rate)") |>   
+  mutate(FedFundsRate_scaled = as.numeric(scale(FedFundsRate)),          
+         JobPostings_scaled = as.numeric(scale(JobPostings)),          
+         Exchange_scaled = as.numeric(scale(Reals_USD_Exchange)),
+         RecessionIndicator = if_else(RecessionIndicator == "0", "1", "2"))
+```
+
+```{r}
+exchange <- exchange |>
+  select(FedFundsRate_scaled, JobPostings_scaled, Exchange_scaled, RecessionIndicator)
 ```
 
 ## Where is the data from?
@@ -35,7 +57,14 @@ To format it in excel after downloading, we lined up the daily data that came in
 
 ## Causal Diagram
 
-```{r}  causal_diagram <- dagitty("dag{   FedFundsRate -> Reals_USD_Exchange;   RecessionIndicator -> Reals_USD_Exchange;   JobPostings -> Reals_USD_Exchange }")  gg_dag(causal_diagram,        size = 60,        highlight = 'Reals_USD_Exchange')}
+```{r}
+causal_diagram <- dagitty("dag{   
+                          FedFundsRate -> Reals_USD_Exchange;  
+                          RecessionIndicator -> Reals_USD_Exchange;   
+                          JobPostings -> Reals_USD_Exchange }")  
+gg_dag(causal_diagram,        
+       size = 60,        
+       highlight = 'Reals_USD_Exchange')
 ```
 
 ## Causal Diagram Explanation
@@ -72,15 +101,47 @@ Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicat
 
 ## Prior Predictive Distribution
 
-```{r} n_sim <- 100  prior_pred_dists <- tibble(   b1 = rnorm(n_sim, mean = 1.5, sd = 2),   b2 = rnorm(n_sim, mean = 0.5, sd = 0.5),   b3 = rnorm(n_sim, mean = 125, sd = 30),     sigma = rexp(n_sim, rate = 1),   sim_number = c(1:n_sim)   )  glimpse(prior_pred_dists)}
+```{r}
+n_sim <- 100  
+prior_pred_dists <- tibble(   
+  b1 = rnorm(n_sim, mean = 1.5, sd = 2),   
+  b2 = rnorm(n_sim, mean = 0.5, sd = 0.5),   
+  b3 = rnorm(n_sim, mean = 125, sd = 30),     
+  sigma = rexp(n_sim, rate = 1),   
+  sim_number = c(1:n_sim)   )  
+
+glimpse(prior_pred_dists)
 ```
 
-```{r} # TODO: Add code to draw from the prior samples generated above.}
+```{r}
+beta_0 <- 0
+
+# Create prior predictive draws
+prior_pred_dists <- prior_pred_dists %>%
+  mutate(
+    mu = beta_0 + b1 + b2 + b3,
+    y_sim = rgamma(n_sim, shape = mu / sigma, rate = 1 / sigma)
+  )
+
+glimpse(prior_pred_dists)
+
+gf_dens(~ y_sim, data = prior_pred_dists) %>%
+  gf_labs(
+    title = "Prior Predictive Density of Simulated Outcomes",
+    x = "Simulated y",
+    y = "Density"
+  )
 ```
 
 ## Model Fitting
 
 ```{r}
+exchange_fitted_model <- stan(file = 'final-project.stan',
+                       data = exchange,
+                       chains = 4,
+                       iter = 2000,
+                       warmup = floor(iter/2),
+                       refresh = 0)
 ```
 
 ### Citations
