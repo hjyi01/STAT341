@@ -33,6 +33,9 @@ exchange <- exchange |>
   mutate(DFF_scaled = as.numeric(scale(FedFundsRate)),
          IHLIDXUS_scaled = as.numeric(scale(JobPostings)),
          DEXBZUS_scaled = as.numeric(scale(Reals_USD_Exchange)))
+
+exchange_no_NA <- na.omit(exchange)
+
 ```
 
 ## Where is the data from?
@@ -92,7 +95,7 @@ $$
 $$
 
 $$
-\beta_2\sim\text{Normal(.5, .5)}
+\beta_2\sim\text{Normal(1.5, .5)}
 $$
 
 $$
@@ -100,20 +103,18 @@ $$
 $$
 
 $$
-\lambda\sim\text{exp}(0,1)
+\lambda\sim\text{exp}(0,3)
 $$
 
 #### Rationale
 
 Response Variable: Reals to USD Exchange Rate
 
--   Predictor Variable: US Federal Funds rate ($\beta_1$) (https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the)
-
-An increase to the Federal Funds Rate should create an initial boost in the value of the dollar. With a higher value assigned to the USD, the exchange rate should increase. Therefore, this should be a positive relationship.
-
--   Predictor Variable: US Job Postings According to the Federal Reserve Bank of New York, ($\beta_3$) "rise in employment strengthens the foreign exchange value of the dollar". Therefore, also should be a positive relationship.
+-   Predictor Variable: US Federal Funds rate ($\beta_1$) (https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the) An increase to the Federal Funds Rate should create an initial boost in the value of the dollar. With a higher value assigned to the USD, the exchange rate should increase. Therefore, this should be a positive relationship.
 
 -   Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicator[i]}}$) During a recession, the money that used to be able to purchase, say two gallons of milk, will now only be able to purchase a quarter gallon. This indicates that the currency has become less valueable and should therefore even out in relation to another currency, hence a negative relationship to the exchange rate.
+
+-   Predictor Variable: US Job Postings According to the Federal Reserve Bank of New York, ($\beta_3$) "rise in employment strengthens the foreign exchange value of the dollar". Therefore, also should be a positive relationship.
 
 ## Prior Predictive Distribution
 
