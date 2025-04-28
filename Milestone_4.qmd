@@ -77,7 +77,7 @@ gg_dag(causal_diagram,
 
 ### Model Description
 
-$$ \text{Reals_USD_Exchange} \sim \text{Gamma distribution}(\alpha_{[i]}, \lambda) $$
+$$ \text{Reals USD Exchange} \sim \text{Gamma distribution}(\alpha_{[i]}, \lambda) $$
 
 $$ \alpha_{[i]} = \beta_0+\beta_1*\text{FedFundsRate}+\beta_{\text{RecessionIndicator[i]}}+\beta_3*\text{JobPostings} $$
 
@@ -114,23 +114,22 @@ glimpse(prior_pred_dists)
 ```
 
 ```{r}
-beta_0 <- 0
-
 # Create prior predictive draws
-prior_pred_dists <- prior_pred_dists %>%
+prior_pred_dists <- prior_pred_dists |>
   mutate(
-    mu = beta_0 + b1 + b2 + b3,
-    y_sim = rgamma(n_sim, shape = mu / sigma, rate = 1 / sigma)
+    mu = b0 + b1 + b2 + b3,
+    y_sim = rgamma(n_sim, shape = mu^2 / sigma^2, rate = mu / sigma^2)
   )
 
 glimpse(prior_pred_dists)
 
-gf_dens(~ y_sim, data = prior_pred_dists) %>%
+gf_dens(~ y_sim, data = prior_pred_dists, color = "darkblue") |>
   gf_labs(
     title = "Prior Predictive Density of Simulated Outcomes",
     x = "Simulated y",
     y = "Density"
-  )
+  ) + 
+  theme_bw()
 ```
 
 ## Model Fitting

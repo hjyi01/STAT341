@@ -76,11 +76,15 @@ gg_dag(causal_diagram,
 ### Model Description
 
 $$
-\text{Reals_USD_Exchange} \sim \text{Gamma distribution}(\alpha_{[i]}, \lambda)
+\text{Reals USD Exchange} \sim \text{Gamma distribution}(\alpha_{[i]}, \lambda)
 $$
 
 $$
 \alpha_{[i]} = \beta_0+\beta_1*\text{FedFundsRate}+\beta_{\text{RecessionIndicator[i]}}+\beta_3*\text{JobPostings}
+$$
+
+$$
+\text{This is a placeholder.}\beta_0\sim\text{Normal}(0,1)
 $$
 
 $$
@@ -103,13 +107,13 @@ $$
 
 Response Variable: Reals to USD Exchange Rate
 
-- Predictor Variable: US Federal Funds rate ($\beta_1$) (https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the)
+-   Predictor Variable: US Federal Funds rate ($\beta_1$) (https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the)
 
 An increase to the Federal Funds Rate should create an initial boost in the value of the dollar. With a higher value assigned to the USD, the exchange rate should increase. Therefore, this should be a positive relationship.
 
-- Predictor Variable: US Job Postings According to the Federal Reserve Bank of New York, ($\beta_3$) "rise in employment strengthens the foreign exchange value of the dollar". Therefore, also should be a positive relationship.
+-   Predictor Variable: US Job Postings According to the Federal Reserve Bank of New York, ($\beta_3$) "rise in employment strengthens the foreign exchange value of the dollar". Therefore, also should be a positive relationship.
 
-- Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicator[i]}}$) During a recession, the money that used to be able to purchase, say two gallons of milk, will now only be able to purchase a quarter gallon. This indicates that the currency has become less valueable and should therefore even out in relation to another currency, hence a negative relationship to the exchange rate.
+-   Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicator[i]}}$) During a recession, the money that used to be able to purchase, say two gallons of milk, will now only be able to purchase a quarter gallon. This indicates that the currency has become less valueable and should therefore even out in relation to another currency, hence a negative relationship to the exchange rate.
 
 ## Prior Predictive Distribution
 
@@ -117,6 +121,7 @@ An increase to the Federal Funds Rate should create an initial boost in the valu
 n_sim <- 100
 
 prior_pred_dists <- tibble(
+  b0 = rnorm(n_sim, mean = 0, sd = 1),
   b1 = rnorm(n_sim, mean = 1.5, sd = 2),
   b2 = rnorm(n_sim, mean = 0.5, sd = 0.5),
   b3 = rnorm(n_sim, mean = 125, sd = 30),  
@@ -128,26 +133,22 @@ glimpse(prior_pred_dists)
 ```
 
 ```{r}
-
-beta_0 <- 0
-
 # Create prior predictive draws
-prior_pred_dists <- prior_pred_dists %>%
+prior_pred_dists <- prior_pred_dists |>
   mutate(
-    mu = beta_0 + b1 + b2 + b3,
-    y_sim = rgamma(n_sim, shape = mu / sigma, rate = 1 / sigma)
+    mu = b0 + b1 + b2 + b3,
+    y_sim = rgamma(n_sim, shape = mu^2 / sigma^2, rate = mu / sigma^2)
   )
 
 glimpse(prior_pred_dists)
 
-gf_dens(~ y_sim, data = prior_pred_dists, color = "darkblue") %>%
+gf_dens(~ y_sim, data = prior_pred_dists, color = "darkblue") |>
   gf_labs(
     title = "Prior Predictive Density of Simulated Outcomes",
     x = "Simulated y",
     y = "Density"
   ) + 
   theme_bw()
-
 ```
 
 ### Citations
