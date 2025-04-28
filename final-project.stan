@@ -25,6 +25,6 @@ model {
   b1 ~ normal(1.5, 2);
   b2 ~ normal(0.5, 0.5);
   b3 ~ normal(125, 30);
-  sigma ~ exp(0,1);
+  sigma ~ exponential(1);
   Reals_USD_Exchange ~ gamma(alpha, lambda); 
 }
