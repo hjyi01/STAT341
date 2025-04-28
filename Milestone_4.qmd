@@ -87,7 +87,7 @@ $$ \beta_2\sim\text{Normal(.5, .5)} $$
 
 $$ \beta_3\sim\text{Normal(125, 30)} $$
 
-$$ \lambda\sim\text{exp}(0,1) $$
+$$ \lambda\sim\text{exp}(0,3) $$
 
 #### rationale
 
@@ -107,7 +107,7 @@ prior_pred_dists <- tibble(
   b1 = rnorm(n_sim, mean = 1.5, sd = 2),   
   b2 = rnorm(n_sim, mean = 0.5, sd = 0.5),   
   b3 = rnorm(n_sim, mean = 125, sd = 30),     
-  sigma = rexp(n_sim, rate = 1),   
+  sigma = rexp(n_sim, rate = 3),   
   sim_number = c(1:n_sim)   )  
 
 glimpse(prior_pred_dists)
