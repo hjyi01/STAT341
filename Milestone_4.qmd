@@ -1,5 +1,5 @@
 ---
-title: "Milestone 3: Got Priors" 
+title: "Milestone 4: Fit it!"
 authors: Heewon Yi, Noelle Haviland, Celia Carey 
 format: html 
 editor: visual 
@@ -9,7 +9,9 @@ embed-resources: true
 ```{r}
 #| include: false 
 library(dagitty) 
-library(CalvinBayes) 
+library(CalvinBayes)
+library(tidybayes)
+library(tidyverse)
 library(dplyr)
 library(rstan)
 ```
@@ -32,13 +34,19 @@ exchange <- exchange |>
          Reals_USD_Exchange = "DEXBZUS (exchange rate)") |>   
   mutate(FedFundsRate_scaled = as.numeric(scale(FedFundsRate)),          
          JobPostings_scaled = as.numeric(scale(JobPostings)),          
-         Exchange_scaled = as.numeric(scale(Reals_USD_Exchange)),
-         RecessionIndicator = if_else(RecessionIndicator == "0", "1", "2"))
+         RecessionIndicator = as.numeric(if_else(RecessionIndicator == "0", 1, 2)))
+
+exchange <- exchange |>
+  drop_na(Reals_USD_Exchange)
 ```
 
 ```{r}
 exchange <- exchange |>
-  select(FedFundsRate_scaled, JobPostings_scaled, Exchange_scaled, RecessionIndicator)
+  select(FedFundsRate_scaled, JobPostings_scaled, Reals_USD_Exchange, RecessionIndicator)
+```
+
+```{r}
+stan_exchange <- compose_data(exchange)
 ```
 
 ## Where is the data from?
@@ -81,6 +89,10 @@ $$ \text{Reals USD Exchange} \sim \text{Gamma distribution}(\alpha_{[i]}, \lambd
 
 $$ \alpha_{[i]} = \beta_0+\beta_1*\text{FedFundsRate}+\beta_{\text{RecessionIndicator[i]}}+\beta_3*\text{JobPostings} $$
 
+$$
+\text{This is a placeholder.}\beta_0\sim\text{Normal}(0,1)
+$$
+
 $$ \beta_1\sim\text{Normal}(1.5, 2) $$
 
 $$ \beta_2\sim\text{Normal(.5, .5)} $$
@@ -103,7 +115,8 @@ Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicat
 
 ```{r}
 n_sim <- 100  
-prior_pred_dists <- tibble(   
+prior_pred_dists <- tibble(  
+  b0 = rnorm(n_sim, mean = 0, sd = 1), #PLACEHOLDER
   b1 = rnorm(n_sim, mean = 1.5, sd = 2),   
   b2 = rnorm(n_sim, mean = 0.5, sd = 0.5),   
   b3 = rnorm(n_sim, mean = 125, sd = 30),     
@@ -135,12 +148,12 @@ gf_dens(~ y_sim, data = prior_pred_dists, color = "darkblue") |>
 ## Model Fitting
 
 ```{r}
-exchange_fitted_model <- stan(file = 'final-project.stan',
-                       data = exchange,
-                       chains = 4,
-                       iter = 2000,
-                       warmup = floor(iter/2),
-                       refresh = 0)
+exchange_fitted_model <- stan(file = 'finalproject.stan',
+                              data = stan_exchange,
+                              chains = 4,
+                              iter = 3000,
+                              warmup = 300,
+                              refresh = 0)
 ```
 
 ### Citations
