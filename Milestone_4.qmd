@@ -90,7 +90,7 @@ $$ \text{Reals USD Exchange} \sim \text{Gamma distribution}(\alpha_{[i]}, \lambd
 $$ \alpha_{[i]} = \beta_0+\beta_1*\text{FedFundsRate}+\beta_{\text{RecessionIndicator[i]}}+\beta_3*\text{JobPostings} $$
 
 $$
-\text{This is a placeholder.}\beta_0\sim\text{Normal}(0,1)
+\beta_0\sim\text{Normal}(.76028,.65)
 $$
 
 $$ \beta_1\sim\text{Normal}(1.5, 2) $$
