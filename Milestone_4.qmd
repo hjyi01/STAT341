@@ -156,6 +156,10 @@ exchange_fitted_model <- stan(file = 'finalproject.stan',
                               refresh = 0)
 ```
 
+```{r}
+saveRDS(exchange_fitted_model, file="exchange_fitted_model.RDS")
+```
+
 ### Citations
 
 Cochrane, J. H. (2024, September 16). Do higher interest rates raise the exchange rate? The Grumpy Economist. https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the
