@@ -86,7 +86,7 @@ $$
 $$
 
 $$
-\text{This is a placeholder.}\beta_0\sim\text{Normal}(0,1)
+\beta_0\sim\text{Normal}(.76028,.65)
 $$
 
 $$
