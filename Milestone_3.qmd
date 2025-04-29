@@ -35,7 +35,6 @@ exchange <- exchange |>
          DEXBZUS_scaled = as.numeric(scale(Reals_USD_Exchange)))
 
 exchange_no_NA <- na.omit(exchange)
-
 ```
 
 ## Where is the data from?
@@ -110,11 +109,11 @@ $$
 
 Response Variable: Reals to USD Exchange Rate
 
--   Predictor Variable: US Federal Funds rate ($\beta_1$) (https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the) An increase to the Federal Funds Rate should create an initial boost in the value of the dollar. With a higher value assigned to the USD, the exchange rate should increase. Therefore, this should be a positive relationship. The Federal Funds rate was originally data pulled from the FRED website that indicates an overnight interest rate between banks. On average this year, the Fed Funds rate has been around 4%, but we standardized our data so to account for this, we used 1.5 with a sd of 2 because occasionally, depending on other economic conditions, banks can lend other banks money at cost instead of at profit, though this is rather rare. 
+-   Predictor Variable: US Federal Funds rate ($\beta_1$) (https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the) An increase to the Federal Funds Rate should create an initial boost in the value of the dollar. With a higher value assigned to the USD, the exchange rate should increase. Therefore, this should be a positive relationship. The Federal Funds rate was originally data pulled from the FRED website that indicates an overnight interest rate between banks. On average this year, the Fed Funds rate has been around 4%, but we standardized our data so to account for this, we used 1.5 with a sd of 2 because occasionally, depending on other economic conditions, banks can lend other banks money at cost instead of at profit, though this is rather rare.
 
--   Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicator[i]}}$) During a recession, the money that used to be able to purchase, say two gallons of milk, will now only be able to purchase a quarter gallon. This indicates that the currency has become less valuable and should therefore even out in relation to another currency, hence a negative relationship to the exchange rate. We had to change the categorical values of this data to be "1" and "2" instead of "0" and "1". As a result, we guessed that Brazil's economy experience quite a bit of fluctuation and they are in a recession about half the time. With a standard deviation of 0.5, this expands to include both the recession and no recession values. 
+-   Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicator[i]}}$) During a recession, the money that used to be able to purchase, say two gallons of milk, will now only be able to purchase a quarter gallon. This indicates that the currency has become less valuable and should therefore even out in relation to another currency, hence a negative relationship to the exchange rate. We had to change the categorical values of this data to be "1" and "2" instead of "0" and "1". As a result, we guessed that Brazil's economy experience quite a bit of fluctuation and they are in a recession about half the time. With a standard deviation of 0.5, this expands to include both the recession and no recession values.
 
--   Predictor Variable: US Job Postings According to the Federal Reserve Bank of New York, ($\beta_3$) "rise in employment strengthens the foreign exchange value of the dollar". Therefore, also should be a positive relationship. Depending on how the job market is looking, there are a largely varying amount of jobs being posted on Indeed on a daily basis. According to the FRED, a loose average is around 100, but differs quite a bit, hence the larger standard deviation of 30. 
+-   Predictor Variable: US Job Postings According to the Federal Reserve Bank of New York, ($\beta_3$) "rise in employment strengthens the foreign exchange value of the dollar". Therefore, also should be a positive relationship. Depending on how the job market is looking, there are a largely varying amount of jobs being posted on Indeed on a daily basis. According to the FRED, a loose average is around 100, but differs quite a bit, hence the larger standard deviation of 30.
 
 ## Prior Predictive Distribution
 
@@ -122,7 +121,7 @@ Response Variable: Reals to USD Exchange Rate
 n_sim <- 100
 
 prior_pred_dists <- tibble(
-  b0 = rnorm(n_sim, mean = 0, sd = 1),
+  b0 = rnorm(n_sim, mean = .76028, sd = .65),
   b1 = rnorm(n_sim, mean = 1.5, sd = 2),
   b2 = rnorm(n_sim, mean = 0.5, sd = 0.5),
   b3 = rnorm(n_sim, mean = 125, sd = 30),  
@@ -157,3 +156,6 @@ gf_dens(~ y_sim, data = prior_pred_dists, color = "darkblue") |>
 Cochrane, J. H. (2024, September 16). Do higher interest rates raise the exchange rate? The Grumpy Economist. https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the
 
 Harris, E., & Zabka, N. M. (1995). The employment report and the dollar. Number, 1. https://doi.org/10.2139/ssrn.1001251
+
+https://fred.stlouisfed.org/series/EXBZUS (took March 2025 average EXR to create B0)
+
