@@ -148,6 +148,7 @@ gf_dens(~ y_sim, data = prior_pred_dists, color = "darkblue") |>
 ## Model Fitting
 
 ```{r}
+#| eval: false
 exchange_fitted_model <- stan(file = 'finalproject.stan',
                               data = stan_exchange,
                               chains = 4,
@@ -157,6 +158,7 @@ exchange_fitted_model <- stan(file = 'finalproject.stan',
 ```
 
 ```{r}
+#| eval: false
 saveRDS(exchange_fitted_model, file="exchange_fitted_model.RDS")
 ```
 
