@@ -52,7 +52,8 @@ stan_exchange <- compose_data(exchange)
 ```
 
 ## Research Question
-To what degree does the US's Fed have on the Brazilian Reals to USD EXR based on their control over the Federal Funds Rate? 
+
+To what degree does the US's Fed have on the Brazilian Reals to USD EXR based on their control over the Federal Funds Rate?
 
 ## Where is the data from?
 
@@ -175,7 +176,25 @@ exchange_fitted_model <- readRDS("exchange_fitted_model.RDS")
 mcmc_trace(exchange_fitted_model)
 ```
 
-### Citations
+The chains of this trace plot are stationary and well-mixing, except in the plot for lp\_\_. They stay within a fairly narrow range and overlap, but do not match exactly.
+
+```{r}
+mcmc_rank_overlay(exchange_fitted_model)
+```
+
+The chains of this trace rank plot are also stationary (they all mostly stay in the range of 100-150). The chains overlap, but are not directly on top of each other.
+
+```{r}
+exchange_fitted_model
+```
+
+Our Rhat value is exactly 1, indicating that the model has converged and we used an appropriate number of post-warmup iterations. Our n_eff values are quite high, indicating that we have plenty of effective samples because we used a sufficient amount of warmup iterations.
+
+## Posterior Predictive Distribution
+
+## Conclusions
+
+## Citations
 
 Cochrane, J. H. (2024, September 16). Do higher interest rates raise the exchange rate? The Grumpy Economist. https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the
 
