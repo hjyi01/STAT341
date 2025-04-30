@@ -14,6 +14,7 @@ library(tidybayes)
 library(tidyverse)
 library(dplyr)
 library(rstan)
+library(bayesplot)
 ```
 
 ## Read in dataset
@@ -90,7 +91,7 @@ $$ \text{Reals USD Exchange} \sim \text{Gamma distribution}(\alpha_{[i]}, \lambd
 $$ \alpha_{[i]} = \beta_0+\beta_1*\text{FedFundsRate}+\beta_{\text{RecessionIndicator[i]}}+\beta_3*\text{JobPostings} $$
 
 $$
-\text{This is a placeholder.}\beta_0\sim\text{Normal}(0,1)
+\beta_0\sim\text{Normal}(.76028,.65)
 $$
 
 $$ \beta_1\sim\text{Normal}(1.5, 2) $$
@@ -148,12 +149,28 @@ gf_dens(~ y_sim, data = prior_pred_dists, color = "darkblue") |>
 ## Model Fitting
 
 ```{r}
+#| eval: false
 exchange_fitted_model <- stan(file = 'finalproject.stan',
                               data = stan_exchange,
                               chains = 4,
                               iter = 3000,
                               warmup = 300,
                               refresh = 0)
+```
+
+```{r}
+#| eval: false
+saveRDS(exchange_fitted_model, file="exchange_fitted_model.RDS")
+```
+
+```{r}
+exchange_fitted_model <- readRDS("exchange_fitted_model.RDS")
+```
+
+## Chain Diagnostics
+
+```{r}
+mcmc_trace(exchange_fitted_model)
 ```
 
 ### Citations

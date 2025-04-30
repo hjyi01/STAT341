@@ -23,7 +23,7 @@ model {
     alpha[i] = mu[i]^2 / sigma^2;
     lambda[i] = mu[i] / sigma^2;
   }
-  b0 ~ normal(0, 1); // TODO: change
+  b0 ~ normal(0.76028, 0.65);
   b1 ~ normal(1.5, 2);
   b2 ~ normal(1.5, 0.5);
   b3 ~ normal(125, 30);
