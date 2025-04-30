@@ -120,7 +120,7 @@ Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicat
 ```{r}
 n_sim <- 100  
 prior_pred_dists <- tibble(  
-  b0 = rnorm(n_sim, mean = 0, sd = 1), #PLACEHOLDER
+  b0 = rnorm(n_sim, mean = 0.76028, sd = 0.65),
   b1 = rnorm(n_sim, mean = 1.5, sd = 2),   
   b2 = rnorm(n_sim, mean = 0.5, sd = 0.5),   
   b3 = rnorm(n_sim, mean = 125, sd = 30),     
@@ -191,6 +191,42 @@ exchange_fitted_model
 Our Rhat value is exactly 1, indicating that the model has converged and we used an appropriate number of post-warmup iterations. Our n_eff values are quite high, indicating that we have plenty of effective samples because we used a sufficient amount of warmup iterations.
 
 ## Posterior Predictive Distribution
+
+```{r}
+psamp <- as.data.frame(exchange_fitted_model)
+glimpse(psamp)
+
+gf_dens(~b0, data = psamp)
+```
+
+```{r}
+gf_dens(~b1, data = psamp)
+```
+
+```{r}
+psamp <- psamp |>   
+  rename(b2_1 = "b2[1]",          
+         b2_2 = "b2[2]")
+gf_dens(~b2_1, data = psamp)
+```
+
+```{r}
+gf_dens(~b2_2, data = psamp)
+```
+
+```{r}
+gf_dens(~b3, data = psamp)
+```
+
+```{r}
+gf_dens(~sigma, data = psamp)
+```
+
+## Model Comparison
+
+```{r}
+#rethinking::PSIS(exchange_fitted_model)
+```
 
 ## Conclusions
 
