@@ -226,8 +226,21 @@ gf_dens(~sigma, data = psamp)
 
 ## Model Comparison
 
+```{stan output.var=}
+generated quantities {
+  vector[n] log_lik;
+    for (i in 1:n) {
+    // link function not needed in the log_lik calc as it's embedded in obtaining the alpha and lambda
+      log_lik[i] = gamma_lpdf(response[i] | alpha[i], lambda[i]); 
+    } 
+}
+
+```
+
+
+
 ```{r}
-#rethinking::PSIS(exchange_fitted_model)
+rethinking::PSIS(exchange_fitted_model)
 ```
 
 ## Conclusions
