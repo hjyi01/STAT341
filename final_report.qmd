@@ -222,6 +222,8 @@ gf_dens(~b3, data = psamp)
 gf_dens(~sigma, data = psamp)
 ```
 
+
+
 ## Model Comparison
 
 ```{r}
