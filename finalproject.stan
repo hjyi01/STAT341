@@ -14,6 +14,14 @@ parameters {
   real<lower=0> sigma;
 }
 
+generated quantities {
+vector[n] log_lik;
+  for (i in 1:n) {
+  // link function not needed in the log_lik calc as it's embedded in obtaining the alpha and lambda
+    log_lik[i] = gamma_lpdf(response[i] | alpha[i], lambda[i]); 
+  } 
+}
+
 model {
   vector[n] mu;
   vector[n] alpha;
