@@ -222,28 +222,17 @@ gf_dens(~b3, data = psamp)
 gf_dens(~sigma, data = psamp)
 ```
 
-
-
 ## Model Comparison
 
-```{stan output.var=}
-generated quantities {
-  vector[n] log_lik;
-    for (i in 1:n) {
-    // link function not needed in the log_lik calc as it's embedded in obtaining the alpha and lambda
-      log_lik[i] = gamma_lpdf(response[i] | alpha[i], lambda[i]); 
-    } 
-}
-
-```
-
-
-
 ```{r}
-rethinking::PSIS(exchange_fitted_model)
+#rethinking::PSIS(exchange_fitted_model)
 ```
 
 ## Conclusions
+
+The Federal Funds Rate had the most impact on the exchange rate from Reals to U.S. dollars. We originally predicted that the job postings would have a positive effect on the exchange rate, but our model shows us a negative effect which we have not found a reason for. The recession indicator had a positive impact, but it is drastically less than the impact of the federal funds rate.
+
+Another factor to consider would be that there are two ways that an EXR can be changed. From each currency's end, the impact on the EXR can be cancelled out or drastically magnified when there are changes to the economic conditions of both countries. Apart from the data that we gathered, we did not additionally consider single events such as political strife that may have created an anomaly in the EXR.
 
 ## Citations
 
