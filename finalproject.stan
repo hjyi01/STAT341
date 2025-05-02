@@ -14,14 +14,6 @@ parameters {
   real<lower=0> sigma;
 }
 
-generated quantities {
-vector[n] log_lik;
-  for (i in 1:n) {
-  // link function not needed in the log_lik calc as it's embedded in obtaining the alpha and lambda
-    log_lik[i] = gamma_lpdf(response[i] | alpha[i], lambda[i]); 
-  } 
-}
-
 model {
   vector[n] mu;
   vector[n] alpha;
@@ -37,4 +29,18 @@ model {
   b3 ~ normal(125, 30);
   sigma ~ exponential(1);
   Reals_USD_Exchange ~ gamma(alpha, lambda);
+}
+
+generated quantities {
+  vector[n] mu;
+  vector[n] alpha;
+  vector[n] lambda;
+  vector[n] log_lik;
+  for (i in 1:n) {
+    mu[i] = exp(b0 + b1 * FedFundsRate_scaled[i] + b2[RecessionIndicator[i]] + b3 * JobPostings_scaled[i]);
+    alpha[i] = mu[i]^2 / sigma^2;
+    lambda[i] = mu[i] / sigma^2;
+  // link function not needed in the log_lik calc as it's embedded in obtaining the alpha and lambda
+    log_lik[i] = gamma_lpdf(Reals_USD_Exchange[i] | alpha[i], lambda[i]); 
+  } 
 }
