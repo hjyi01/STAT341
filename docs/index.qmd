@@ -1,9 +1,9 @@
 ---
 title: "Stats 341 Final Project"
-author: Celia Carey, Noelle Haviland, Heewon Yi
+author: Heewon Yi, Noelle Haviland, Celia Carey
 format: html
 editor: visual
-embed-resource: true
+embed-resources: true
 ---
 
 ## Welcome to STAT341 Final Project!
