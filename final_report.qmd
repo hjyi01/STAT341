@@ -173,7 +173,8 @@ exchange_fitted_model <- readRDS("exchange_fitted_model.RDS")
 ## Chain Diagnostics
 
 ```{r}
-mcmc_trace(exchange_fitted_model)
+mcmc_trace(exchange_fitted_model,
+           pars = vars(starts_with("b"), "sigma"))
 ```
 
 The chains of this trace plot are stationary and well-mixing, except in the plot for lp\_\_. They stay within a fairly narrow range and overlap, but do not match exactly.
