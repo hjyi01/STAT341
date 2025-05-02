@@ -1,6 +1,6 @@
 ---
 title: "Final STAT 341 Report"
-authors: Heewon Yi, Noelle Haviland, Celia Carey 
+authors: Celia Carey, Noelle Haviland, Heewon Yi
 format: html 
 editor: visual 
 embed-resources: true 
@@ -226,7 +226,7 @@ gf_dens(~sigma, data = psamp)
 ## Model Comparison
 
 ```{r}
-#rethinking::PSIS(exchange_fitted_model)
+rethinking::PSIS(exchange_fitted_model)
 ```
 
 ## Conclusions
