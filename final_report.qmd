@@ -226,7 +226,7 @@ gf_dens(~sigma, data = psamp)
 ## Model Comparison
 
 ```{r}
-rethinking::PSIS(exchange_fitted_model)
+#rethinking::PSIS(exchange_fitted_model)
 ```
 
 ## Conclusions
