@@ -118,29 +118,33 @@ Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicat
 ## Prior Predictive Distribution
 
 ```{r}
-n_sim <- 100  
-prior_pred_dists <- tibble(  
-  b0 = rnorm(n_sim, mean = 0.76028, sd = 0.65),
-  b1 = rnorm(n_sim, mean = 1.5, sd = 2),   
-  b2 = rnorm(n_sim, mean = 0.5, sd = 0.5),   
-  b3 = rnorm(n_sim, mean = 125, sd = 30),     
-  sigma = rexp(n_sim, rate = 3),   
-  sim_number = c(1:n_sim)   )  
-
-glimpse(prior_pred_dists)
+n_sim <- 100
+prior_pred_dist <- tibble(
+  sim_id = c(1:n_sim)) |>
+  mutate(
+    b0 = rnorm(n_sim, mean = 0.76028, sd = 0.65),
+    b1 = rnorm(n_sim, mean = 1.5, sd = 2),   
+    b2 = rnorm(n_sim, mean = 0.5, sd = 0.5),
+    b3 = rnorm(n_sim, mean = 125, sd = 30),     
+    sigma = rexp(n_sim, rate = 3),
+  ) |>
+  rowwise()  |>
+  mutate(
+    mu = list(exp(b0 + b1 * exchange$FedFundsRate_scaled + b2 * exchange$RecessionIndicator + b3 * exchange$JobPostings_scaled))) |>
+  unnest(cols = mu) |> 
+  ungroup() |>
+  mutate(
+    alpha = mu^2 / sigma^2,
+    lambda = mu / sigma^2) |>
+  rowwise() |>
+  mutate(
+    y_sim = rgamma(1, shape = alpha, rate = lambda)
+  ) |>
+  ungroup()
 ```
 
 ```{r}
-# Create prior predictive draws
-prior_pred_dists <- prior_pred_dists |>
-  mutate(
-    mu = b0 + b1 + b2 + b3,
-    y_sim = rgamma(n_sim, shape = mu^2 / sigma^2, rate = mu / sigma^2)
-  )
-
-glimpse(prior_pred_dists)
-
-gf_dens(~ y_sim, data = prior_pred_dists, color = "darkblue") |>
+gf_dens(~ y_sim, data = prior_pred_dist, color = "darkblue") |>
   gf_labs(
     title = "Prior Predictive Density of Simulated Outcomes",
     x = "Simulated y",
