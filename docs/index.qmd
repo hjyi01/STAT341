@@ -9,3 +9,5 @@ embed-resources: true
 ## Welcome to STAT341 Final Project!
 
 Click here to view our final report: [Final Report](https://hjyi01.github.io/STAT341/final_report)
+
+Click here to view our Stan code: [Stan File](https://hjyi01.github.io/STAT341/finalproject.stan)
