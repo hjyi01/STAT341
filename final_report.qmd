@@ -91,9 +91,9 @@ gg_dag(causal_diagram,
 
 ### Model Description
 
-$$ \text{Reals USD Exchange} \sim \text{Gamma distribution}(\alpha_{[i]}, \lambda) $$
+$$ \text{Reals USD Exchange} \sim \text{Gamma distribution}(\mu_{[i]}, \sigma) $$
 
-$$ \alpha_{[i]} = \beta_0+\beta_1*\text{FedFundsRate}+\beta_{\text{RecessionIndicator[i]}}+\beta_3*\text{JobPostings} $$
+$$ \mu_{[i]} = \beta_0+\beta_1*\text{FedFundsRate}+\beta_{\text{RecessionIndicator[i]}}+\beta_3*\text{JobPostings} $$
 
 $$ \beta_0\sim\text{Normal}(.76028,.65) $$
 
@@ -103,7 +103,7 @@ $$ \beta_2\sim\text{Normal(.5, .5)} $$
 
 $$ \beta_3\sim\text{Normal(125, 30)} $$
 
-$$ \lambda\sim\text{exp}(0,3) $$
+$$ \sigma\sim\text{exp}(0,3) $$
 
 #### Rationale for Priors
 
@@ -150,8 +150,11 @@ gf_dens(~ y_sim, data = prior_pred_dist, color = "darkblue") |>
     x = "Simulated y",
     y = "Density"
   ) + 
-  theme_bw()
+  theme_bw() +
+  xlim(-1, 1)
 ```
+
+The prior predictive distribution is centered at zero, which suggests our priors are placing more weight on the lower tail of our distribution (meaning it is expecting an exchange rate close to zero). Alternatively, one or more of our priors could have been better-defined. We have learned that choosing GLM priors is difficult.
 
 ## Model Fitting
 
