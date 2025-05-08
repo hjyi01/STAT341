@@ -83,7 +83,29 @@ gg_dag(causal_diagram,
 
 ## Description of Variables Used
 
-![](images/Screenshot 2025-05-06 at 10.28.45 PM (1).png)
+**US Fed Funds rate**
+
+Measures: The interest rate that commercial banks lend money to one another overnight at
+
+Original Unit of measure: percent
+
+Standardized: yes
+
+**Brazil Recession Indicator**
+
+Measures: Whether or not Brazil is in a recession
+
+Original units of measure: 0 - no recession and 1 - recession
+
+Standardized: no
+
+**US Job Postings**
+
+Measures: A seasonally adjusted number of new US job postings on Indeed
+
+Original unit of measure: Indexed at February, 1 2020 = 100
+
+Standardized: yes
 
 ## Causal Diagram Explanation
 
