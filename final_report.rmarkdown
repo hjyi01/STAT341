@@ -17,7 +17,11 @@ library(rstan)
 library(bayesplot)
 ```
 
+
+
 ## Read in dataset
+
+
 
 ```{r}
 library(readxl) 
@@ -25,7 +29,11 @@ exchange <- read_excel("fredgraph.xlsx")
 glimpse(exchange)
 ```
 
+
+
 Variable Standardization
+
+
 
 ```{r}
 exchange <- exchange |>   
@@ -51,6 +59,8 @@ exchange <- exchange |>
 stan_exchange <- compose_data(exchange)
 ```
 
+
+
 ## Research Question
 
 To what degree does the US's Fed have on the Brazilian Reals to USD EXR based on their control over the Federal Funds Rate?
@@ -71,6 +81,8 @@ To format it in excel after downloading, we lined up the daily data that came in
 
 ## Causal Diagram
 
+
+
 ```{r}
 causal_diagram <- dagitty("dag{   
                           FedFundsRate -> Reals_USD_Exchange;  
@@ -80,6 +92,8 @@ gg_dag(causal_diagram,
        size = 60,        
        highlight = 'Reals_USD_Exchange')
 ```
+
+
 
 ## Description of Variables Used
 
@@ -121,6 +135,8 @@ Categorical Variable: Brazil Recession Indicator ($\beta_{\text{RecessionIndicat
 
 ## Prior Predictive Distribution
 
+
+
 ```{r}
 n_sim <- 100
 prior_pred_dist <- tibble(
@@ -158,9 +174,13 @@ gf_dens(~ y_sim, data = prior_pred_dist, color = "darkblue") |>
   xlim(-1, 1)
 ```
 
+
+
 The prior predictive distribution is centered at zero, which suggests our priors are placing more weight on the lower tail of our distribution (meaning it is expecting an exchange rate close to zero). Alternatively, one or more of our priors could have been better-defined. We have learned that choosing GLM priors is difficult.
 
 ## Model Fitting
+
+
 
 ```{r}
 #| eval: false
@@ -181,28 +201,44 @@ saveRDS(exchange_fitted_model, file="exchange_fitted_model.RDS")
 exchange_fitted_model <- readRDS("exchange_fitted_model.RDS")
 ```
 
+
+
 ## Chain Diagnostics
+
+
 
 ```{r}
 mcmc_trace(exchange_fitted_model,
            pars = vars(starts_with("b"), "sigma"))
 ```
 
+
+
 The chains of this trace plot are stationary and well-mixing, except in the plot for lp\_\_. They stay within a fairly narrow range and overlap, but do not match exactly.
+
+
 
 ```{r}
 mcmc_rank_overlay(exchange_fitted_model)
 ```
 
+
+
 The chains of this trace rank plot are also stationary (they all mostly stay in the range of 100-150). The chains overlap, but are not directly on top of each other.
+
+
 
 ```{r}
 exchange_fitted_model
 ```
 
+
+
 Our Rhat value is exactly 1, indicating that the model has converged and we used an appropriate number of post-warmup iterations. Our n_eff values are quite high, indicating that we have plenty of effective samples because we used a sufficient amount of warmup iterations.
 
 ## Posterior Predictive Distribution
+
+
 
 ```{r}
 psamp <- as.data.frame(exchange_fitted_model)
@@ -234,11 +270,17 @@ gf_dens(~b3, data = psamp)
 gf_dens(~sigma, data = psamp)
 ```
 
+
+
 ## Model Comparison
+
+
 
 ```{r}
 #rethinking::PSIS(exchange_fitted_model)
 ```
+
+
 
 ## Conclusions
 
@@ -251,3 +293,4 @@ Another factor to consider would be that there are two ways that an EXR can be c
 Cochrane, J. H. (2024, September 16). Do higher interest rates raise the exchange rate? The Grumpy Economist. https://www.grumpy-economist.com/p/do-higher-interest-rates-raise-the
 
 Harris, E., & Zabka, N. M. (1995). The employment report and the dollar. Number, 1. https://doi.org/10.2139/ssrn.1001251
+
